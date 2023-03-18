@@ -1,0 +1,38 @@
+[version]
+path = "src/cosmic/__about__.py"
+
+[envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/cosmic --cov=tests {args}"
+no-cov = "cov --no-cov {args}"
+
+[[envs.test.matrix]]
+python = ["37", "38", "39", "310", "311"]
+
+[envs.lint]
+detached = true
+dependencies = [
+  "black>=22.10.0",
+  "mypy>=0.991",
+  "ruff>=0.0.166",
+]
+
+[envs.lint.scripts]
+typing = "mypy --install-types --non-interactive {args:src/cosmic tests}"
+style = [
+  "ruff {args:.}",
+  "black --check --diff {args:.}",
+]
+fmt = [
+  "black {args:.}",
+  "ruff --fix {args:.}",
+  "style",
+]
+all = [
+  "style",
+  "typing",
+]
