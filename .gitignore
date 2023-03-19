@@ -20,6 +20,7 @@ __pycache__/
 
 # Root files
 /.coverage*.idea/
+/.coverage
+tags
 
 # Other
-tags
