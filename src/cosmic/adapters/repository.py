@@ -1,10 +1,12 @@
 import abc
-from typing import Hashable
+from collections.abc import Hashable
 
 from ..domain.model import Aggregate
 
 
 class AbstractRepository(abc.ABC):
+    _entity_type: type[Aggregate]
+
     def __init__(self):
         self.seen = set()
 
@@ -25,7 +27,7 @@ class AbstractRepository(abc.ABC):
         self._add(aggregate)
         self.seen.add(aggregate)
 
-    def get(self, *args, **kwargs) -> Aggregate:
+    def get(self, *args, **kwargs) -> Aggregate | None:
         aggregate = self._get(*args, **kwargs)
         if aggregate:
             self.seen.add(aggregate)
@@ -36,7 +38,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get(self, *args, **kwargs) -> Aggregate:
+    def _get(self, *args, **kwargs) -> Aggregate | None:
         raise NotImplementedError
 
 
@@ -54,5 +56,5 @@ class MemmoryRepository(AbstractRepository):
     def _add(self, item: Aggregate) -> None:
         self.items[getattr(item, self.match_key)] = item
 
-    def _get(self, key: Hashable) -> Aggregate:
-        return self.items[key]
+    def _get(self, key: Hashable) -> Aggregate | None:
+        return self.items.get(key)

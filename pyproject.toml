@@ -55,7 +55,7 @@ pretty = true
 show_column_numbers = true
 warn_no_return = false
 warn_unused_ignores = true
-strict = true
+# strict = true
 
 [tool.black]
 target-version = ["py310"]

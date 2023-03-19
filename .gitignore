@@ -1,40 +1,25 @@
-.idea/
-env/
-venv/
-.venv/
-env3*/
-Pipfile
-*.lock
+# Global directories
+__pycache__/
+
+# Global files
 *.py[cod]
-*.egg-info/
-.python-version
-/build/
-dist/
-.cache/
-.mypy_cache/
-test.py
-.coverage
-.hypothesis
-/htmlcov/
-/benchmarks/*.json
-/docs/.changelog.md
-/docs/.version.md
-/docs/.tmp_schema_mappings.html
-/docs/.tmp_examples/
-/docs/.tmp-projections/
-/docs/usage/.tmp-projections/
+*.dll
+*.so
+*.log
+*.swp
+
+# Root directories
+/.benchmarks/
+/.env/
+/.idea/
+/.mypy_cache/
+/.pytest_cache/
+/.vscode/
+/dist/
 /site/
-/site.zip
-.pytest_cache/
-.vscode/
-_build/
-cosmic/*.c
-cosmic/*.so
-.auto-format
-/sandbox/
-/.ghtopdep_cache/
-/fastapi/
-/codecov.sh
-/worktrees/
-/.ruff_cache/
+
+# Root files
+/.coverage*.idea/
+
+# Other
 tags

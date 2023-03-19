@@ -1,14 +1,15 @@
 import abc
 import copy
-
-from typing import Generator
+from collections.abc import Generator
 
 from ..adapters.repository import AbstractRepository
 from ..domain.messages import Event
 
 
 class AbstractUnitOfWork(abc.ABC):
-    def __init__(self, repository: AbstractRepository, *args, alias: str | None= None, **kwargs):
+    _repository_type: type[AbstractRepository]
+
+    def __init__(self, repository: AbstractRepository, alias: str | None = None):
         self._check_repository_type(repository)
         self.repository = repository
         if alias:
@@ -50,10 +51,9 @@ class AbstractUnitOfWork(abc.ABC):
 
 
 class MemmoryUnitOfWork(AbstractUnitOfWork):
-
     def __enter__(self) -> "MemmoryUnitOfWork":
-        self._repo_backup = copy.copy(self.repository)
-        self._committed = False
+        self._repo_backup: AbstractRepository = copy.copy(self.repository)
+        self._committed: bool = False
         return self
 
     def _commit(self) -> None:

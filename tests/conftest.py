@@ -1,23 +1,24 @@
+from pydantic import validator
+
 from cosmic import (
     Aggregate,
     MemmoryRepository,
     MemmoryUnitOfWork,
 )
-from pydantic import validator
 
 
 class Telemetry(Aggregate):
     message: str
-    id: int = None
-    _hash_fields = ['id']
+    tel_id: int
+    _hash_fields = ["tel_id"]
 
-    @validator('id', pre=True, always=True)
-    def check_id(cls, id, values):
-        return id or hash(values['message'])
+    @validator("tel_id", pre=True, always=True)
+    def check_id(self, tel_id, values):
+        return tel_id or hash(values["message"])
 
 
 class TelemetryRepository(MemmoryRepository, entity_type=Telemetry):
-    match_key : str = 'message'
+    match_key: str = "message"
 
 
 class TelemetryUnitOfWork(MemmoryUnitOfWork, repository_type=TelemetryRepository):
