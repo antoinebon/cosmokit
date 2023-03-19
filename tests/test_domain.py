@@ -50,7 +50,7 @@ class Address(ValueObject):
     street_line_2: str | None = None
 
     @validator("country_code_iso_alpha_3")
-    def check_country_code(self, country_code_iso_alpha_3: str) -> str:
+    def check_country_code(cls, country_code_iso_alpha_3: str) -> str:
         if len(country_code_iso_alpha_3) != 3:
             raise ValueError("Country code is expected to be of len")
 
@@ -83,10 +83,10 @@ class Building(Aggregate):
     name: str
     address: Address
     suites: list[Suite]
-    building_id: UUID
+    building_id: UUID | None = None
 
     @validator("building_id", pre=True, always=True)
-    def check_id(self, building_id) -> UUID:
+    def check_id(cls, building_id) -> UUID:
         return building_id or uuid4()
 
     @property

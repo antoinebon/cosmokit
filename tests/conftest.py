@@ -9,11 +9,11 @@ from cosmic import (
 
 class Telemetry(Aggregate):
     message: str
-    tel_id: int
-    _hash_fields = ["tel_id"]
+    tel_id: int | None = None
+    _hash_fields: list[str] = ["tel_id"]
 
     @validator("tel_id", pre=True, always=True)
-    def check_id(self, tel_id, values):
+    def check_id(cls, tel_id, values):
         return tel_id or hash(values["message"])
 
 

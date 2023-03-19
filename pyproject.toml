@@ -57,6 +57,7 @@ warn_no_return = false
 warn_unused_ignores = true
 # strict = true
 
+
 [tool.black]
 target-version = ["py310"]
 line-length = 120
@@ -109,3 +110,6 @@ ban-relative-imports = "all"
 [tool.ruff.per-file-ignores]
 # Tests can use relative imports and assertions
 "tests/**/*" = ["I252", "S101"]
+
+[tool.ruff.pep8-naming]
+classmethod-decorators = ["classmethod", "pydantic.validator"]

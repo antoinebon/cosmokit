@@ -10,7 +10,7 @@ from .conftest import Telemetry, TelemetryRepository
 
 def test_telemetry():
     tel = Telemetry(message="hello")
-    assert tel.id is not None
+    assert tel.tel_id is not None
 
 
 def test_malformed_repository():
