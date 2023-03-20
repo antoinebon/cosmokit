@@ -3,8 +3,8 @@ from uuid import UUID, uuid4
 import pytest
 from pydantic import validator
 
-from cosmic.domain.messages import Event
-from cosmic.domain.model import Aggregate, Entity, ValueObject
+from cosmokit.domain.messages import Event
+from cosmokit.domain.model import Aggregate, Entity, ValueObject
 
 # Aggregates consist of one or more child entities
 # We need an aggregate root to create an aggregate

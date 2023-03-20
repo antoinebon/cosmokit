@@ -1,6 +1,6 @@
 import pytest
 
-from cosmic import (
+from cosmokit import (
     Aggregate,
     MemmoryRepository,
 )

@@ -1,6 +1,6 @@
 from pydantic import validator
 
-from cosmic import (
+from cosmokit import (
     Aggregate,
     MemmoryRepository,
     MemmoryUnitOfWork,

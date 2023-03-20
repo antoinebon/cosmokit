@@ -3,10 +3,10 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "cosmic"
+name = "cosmokit"
 description = ''
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = "MIT"
 keywords = []
 authors = [
@@ -26,15 +26,15 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Documentation = "https://github.com/unknown/cosmic#readme"
-Issues = "https://github.com/unknown/cosmic/issues"
-Source = "https://github.com/unknown/cosmic"
+Documentation = "https://github.com/antoinebon/cosmokit#readme"
+Issues = "https://github.com/antoinebon/cosmokit/issues"
+Source = "https://github.com/antoinebon/cosmokit"
 
 [tool.coverage.run]
 branch = true
 parallel = true
 omit = [
-  "src/cosmic/__about__.py",
+  "src/cosmokit/__about__.py",
 ]
 
 [tool.coverage.report]
@@ -96,7 +96,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["cosmic"]
+known-first-party = ["cosmokit"]
 
 # [tool.ruff.flake8-quotes]
 # inline-quotes = "single"

@@ -1,5 +1,5 @@
 [version]
-path = "src/cosmic/__about__.py"
+path = "src/cosmokit/__about__.py"
 
 [envs.default]
 dependencies = [
@@ -7,7 +7,7 @@ dependencies = [
   "pytest-cov",
 ]
 [envs.default.scripts]
-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/cosmic --cov=tests {args}"
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/cosmokit --cov=tests {args}"
 no-cov = "cov --no-cov {args}"
 
 [[envs.test.matrix]]
@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [envs.lint.scripts]
-typing = "mypy --install-types --non-interactive {args:src/cosmic tests}"
+typing = "mypy --install-types --non-interactive {args:src/cosmokit tests}"
 style = [
   "ruff {args:.}",
   "black --check --diff {args:.}",
