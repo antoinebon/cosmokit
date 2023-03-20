@@ -19,3 +19,11 @@ pip install cosmokit
 ## License
 
 `cosmokit` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+
+
+## Inspirations
+
+This project is inspired from:
+
+[Cosmic Python Book](https://www.cosmicpython.com/book/preface.html)
+[cosmic-toolkit](https://github.com/fsgsmartbuildings/cosmic-toolkit)
