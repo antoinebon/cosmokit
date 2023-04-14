@@ -1,5 +1,4 @@
 import abc
-from collections.abc import Hashable
 
 from ..domain.model import Aggregate
 
@@ -9,11 +8,6 @@ class AbstractRepository(abc.ABC):
 
     def __init__(self):
         self.seen = set()
-
-    def __init_subclass__(cls, entity_type: type[Aggregate] = Aggregate, **kwargs):
-        if not issubclass(entity_type, Aggregate):
-            raise TypeError(f"Entity must inherit from {Aggregate.__name__}")
-        cls._entity_type = entity_type
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}, entity_type={self._entity_type.__name__}>"
@@ -42,19 +36,17 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
 
-class MemmoryRepository(AbstractRepository):
-    match_key: str = ""
-
-    def __init__(self, items: list[Aggregate] | None = None, match_key: str | None = None):
+class MemoryRepository(AbstractRepository):
+    def __init__(self, items: list[Aggregate] | None = None):
         super().__init__()
-        self.match_key = match_key or self.match_key
-        self.items = {getattr(item, self.match_key): item for item in (items or [])}
+        self.items = {hash(item): item for item in items} if items else {}
 
     def __copy__(self):
-        return type(self)(items=list(self.items.values()), match_key=self.match_key)
+        return type(self)(items=list(self.items.values()))
 
-    def _add(self, item: Aggregate) -> None:
-        self.items[getattr(item, self.match_key)] = item
+    def _add(self, aggregate: Aggregate) -> None:
+        self.items[hash(aggregate)] = aggregate
 
-    def _get(self, key: Hashable) -> Aggregate | None:
+    def _get(self, *args, **kwargs) -> Aggregate | None:
+        key = self._entity_type.hash_from_kwargs(**kwargs)
         return self.items.get(key)

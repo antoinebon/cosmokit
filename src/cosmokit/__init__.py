@@ -1,15 +1,15 @@
-from .adapters.repository import AbstractRepository, MemmoryRepository
+from .adapters.repository import AbstractRepository, MemoryRepository
 from .domain.messages import Command, Event
 from .domain.model import Aggregate, Entity, ValueObject
 from .service_layer.messagebus import MessageBus
-from .service_layer.unit_of_work import AbstractUnitOfWork, MemmoryUnitOfWork
+from .service_layer.unit_of_work import AbstractUnitOfWork, MemoryUnitOfWork
 
 __all__ = [
     "Aggregate",
     "AbstractRepository",
-    "MemmoryRepository",
+    "MemoryRepository",
     "AbstractUnitOfWork",
-    "MemmoryUnitOfWork",
+    "MemoryUnitOfWork",
     "Entity",
     "ValueObject",
     "Event",

@@ -1,25 +1,22 @@
-from pydantic import validator
-
 from cosmokit import (
     Aggregate,
-    MemmoryRepository,
-    MemmoryUnitOfWork,
+    MemoryRepository,
+    MemoryUnitOfWork,
 )
 
 
 class Telemetry(Aggregate):
     message: str
-    tel_id: int | None = None
-    _hash_fields: list[str] = ["tel_id"]
+    _hash_fields: list[str] = ["message"]
 
-    @validator("tel_id", pre=True, always=True)
-    def check_id(cls, tel_id, values):
-        return tel_id or hash(values["message"])
-
-
-class TelemetryRepository(MemmoryRepository, entity_type=Telemetry):
-    match_key: str = "message"
+    # @validator("tel_id", pre=True, always=True)
+    # def check_id(cls, tel_id, values):
+    #     return tel_id or hash(values["message"])
 
 
-class TelemetryUnitOfWork(MemmoryUnitOfWork, repository_type=TelemetryRepository):
-    pass
+class TelemetryRepository(MemoryRepository):
+    _entity_type = Telemetry
+
+
+class TelemetryUnitOfWork(MemoryUnitOfWork):
+    _repository_type = TelemetryRepository

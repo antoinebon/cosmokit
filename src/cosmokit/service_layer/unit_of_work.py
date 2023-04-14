@@ -1,24 +1,19 @@
+from __future__ import annotations
+
 import abc
 import copy
 from collections.abc import Generator
 
-from ..adapters.repository import AbstractRepository
+from ..adapters.repository import AbstractRepository, MemoryRepository
 from ..domain.messages import Event
 
 
 class AbstractUnitOfWork(abc.ABC):
     _repository_type: type[AbstractRepository]
 
-    def __init__(self, repository: AbstractRepository, alias: str | None = None):
+    def __init__(self, repository: AbstractRepository):
         self._check_repository_type(repository)
         self.repository = repository
-        if alias:
-            setattr(AbstractUnitOfWork, alias, property(lambda self: self.repository))
-
-    def __init_subclass__(cls, repository_type: type[AbstractRepository] = AbstractRepository, **kwargs):
-        if not issubclass(repository_type, AbstractRepository):
-            raise TypeError(f"Repository must inherit from {AbstractRepository.__name__}")
-        cls._repository_type = repository_type
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}, repository_type={self._repository_type.__name__}>"
@@ -27,7 +22,7 @@ class AbstractUnitOfWork(abc.ABC):
         if not type(repository) == self._repository_type:
             raise TypeError(f"Expecting repository of type {self._repository_type.__name__}")
 
-    def __enter__(self) -> "AbstractUnitOfWork":
+    def __enter__(self) -> AbstractUnitOfWork:
         return self
 
     def __exit__(self, *args) -> None:
@@ -50,10 +45,13 @@ class AbstractUnitOfWork(abc.ABC):
         raise NotImplementedError
 
 
-class MemmoryUnitOfWork(AbstractUnitOfWork):
-    def __enter__(self) -> "MemmoryUnitOfWork":
-        self._repo_backup: AbstractRepository = copy.copy(self.repository)
-        self._committed: bool = False
+class MemoryUnitOfWork(AbstractUnitOfWork):
+    _repository_type = MemoryRepository
+    _committed: bool
+
+    def __enter__(self) -> MemoryUnitOfWork:
+        self._repo_backup = copy.copy(self.repository)
+        self._committed = False
         return self
 
     def _commit(self) -> None:

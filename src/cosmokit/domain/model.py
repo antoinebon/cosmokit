@@ -10,16 +10,17 @@ class Entity(BaseModel):
     Mutable entity fully identified by its hash
     """
 
-    _hash_fields: list[str] = []
+    _hash_fields: list[str]
 
     class Config:
         arbitrary_types_allowed: bool = True
 
+    @classmethod
+    def hash_from_kwargs(cls, **kwargs) -> int:
+        return hash(json.dumps({a: kwargs[a] for a in cls._hash_fields}))
+
     def __hash__(self) -> int:
-        if len(self._hash_fields):
-            return hash(json.dumps({a: getattr(self, a) for a in self._hash_fields}))
-        else:
-            raise NotImplementedError
+        return hash(json.dumps({a: getattr(self, a) for a in self._hash_fields}))
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, type(self)):
