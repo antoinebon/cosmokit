@@ -19,12 +19,12 @@ def test_malformed_repository():
     with pytest.raises(TypeError) as e:
         rep = TelemetryRepository()
         rep.add(Aggregate())
-    assert str(e.value) == "Expecting entity of type Telemetry"
+    assert str(e.value) == "Expecting aggregate of type Telemetry"
 
 
 def test_well_formed_repository():
     rep = TelemetryRepository()
-    assert len(rep.items) == 0
+    assert len(rep._items) == 0
 
     tel = Telemetry(message="hello")
 

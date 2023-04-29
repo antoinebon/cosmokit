@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from typing import ClassVar
+
 from cosmokit import (
     Aggregate,
     MemoryRepository,
@@ -5,17 +8,14 @@ from cosmokit import (
 )
 
 
+@dataclass(eq=False)
 class Telemetry(Aggregate):
     message: str
-    _hash_fields: list[str] = ["message"]
-
-    # @validator("tel_id", pre=True, always=True)
-    # def check_id(cls, tel_id, values):
-    #     return tel_id or hash(values["message"])
+    _hash_fields: ClassVar[list[str]] = ["message"]
 
 
 class TelemetryRepository(MemoryRepository):
-    _entity_type = Telemetry
+    _aggregate_type = Telemetry
 
 
 class TelemetryUnitOfWork(MemoryUnitOfWork):

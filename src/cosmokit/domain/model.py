@@ -1,26 +1,25 @@
 import json
-
-from pydantic import BaseModel
-
-from .messages import Event
+from dataclasses import dataclass, field
+from typing import ClassVar
 
 
-class Entity(BaseModel):
+@dataclass
+class Entity:
     """
     Mutable entity fully identified by its hash
     """
 
-    _hash_fields: list[str]
-
-    class Config:
-        arbitrary_types_allowed: bool = True
+    _hash_fields: ClassVar[list[str]]
 
     @classmethod
     def hash_from_kwargs(cls, **kwargs) -> int:
-        return hash(json.dumps({a: kwargs[a] for a in cls._hash_fields}))
+        for f in cls._hash_fields:
+            if f not in kwargs:
+                raise Exception(f"{cls.__name__}.get_hash requires a value for {f}")
+        return hash(json.dumps([hash(kwargs[a]) for a in cls._hash_fields]))
 
     def __hash__(self) -> int:
-        return hash(json.dumps({a: getattr(self, a) for a in self._hash_fields}))
+        return hash(json.dumps([hash(getattr(self, a)) for a in self._hash_fields]))
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, type(self)):
@@ -28,18 +27,27 @@ class Entity(BaseModel):
         return hash(other) == hash(self)
 
 
-class ValueObject(BaseModel):
-    """
-    Immutable entity fully identified by fields values
-    """
-
-    class Config:
-        frozen: bool = True
-
-    def __hash__(self) -> int:
-        return hash(json.dumps(self.__fields__()))
+@dataclass(frozen=True)
+class ValueObject:
+    pass
 
 
+@dataclass(frozen=True)
+class Message(ValueObject):
+    pass
+
+
+@dataclass(frozen=True)
+class Command(Message):
+    pass
+
+
+@dataclass(frozen=True)
+class Event(Message):
+    pass
+
+
+@dataclass(eq=False)
 class Aggregate(Entity):
     """
     Implements bounded context
@@ -67,7 +75,7 @@ class Aggregate(Entity):
     our domain model. Be wary of breaking it!
     """
 
-    events: list[Event] = []
+    events: list[Event] = field(init=False, default_factory=list)
 
     def add_event(self, event: Event) -> None:
         self.events.append(event)

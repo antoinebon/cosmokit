@@ -1,10 +1,10 @@
-from uuid import UUID, uuid4
+from dataclasses import dataclass
+from typing import ClassVar
+from uuid import UUID
 
 import pytest
-from pydantic import validator
 
-from cosmokit.domain.messages import Event
-from cosmokit.domain.model import Aggregate, Entity, ValueObject
+from cosmokit.domain.model import Aggregate, Entity, Event, ValueObject
 
 # Aggregates consist of one or more child entities
 # We need an aggregate root to create an aggregate
@@ -19,6 +19,7 @@ class ValidationError(Exception):
     pass
 
 
+@dataclass(eq=False)
 class Suite(Entity):
     number: str
     name: str
@@ -26,7 +27,7 @@ class Suite(Entity):
     sqft: int
     leased: bool
 
-    _hash_fields = ["number"]
+    _hash_fields: ClassVar[list[str]] = ["number"]
 
     def lease(self) -> None:
         if self.leased:
@@ -39,6 +40,7 @@ class Suite(Entity):
         self.leased = False
 
 
+@dataclass(frozen=True)
 class Address(ValueObject):
     """Address value object"""
 
@@ -49,45 +51,38 @@ class Address(ValueObject):
     country_code_iso_alpha_3: str
     street_line_2: str | None = None
 
-    @validator("country_code_iso_alpha_3")
-    def check_country_code(cls, country_code_iso_alpha_3: str) -> str:
-        if len(country_code_iso_alpha_3) != 3:
-            raise ValueError("Country code is expected to be of len")
 
-        country_code_iso_alpha_3 = country_code_iso_alpha_3.upper()
-        if country_code_iso_alpha_3 not in ["AUS", "CAN", "CYM", "LCA", "RWA", "USA"]:
-            raise ValueError(f"Country {country_code_iso_alpha_3!r} is not supported")
-        return country_code_iso_alpha_3
-
-
+@dataclass(frozen=True)
 class SuiteAdded(Event):
     building_id: UUID
     number: str
 
 
+@dataclass(frozen=True)
 class SuiteLeased(SuiteAdded):
     pass
 
 
+@dataclass(frozen=True)
 class SuiteMadeAvailable(SuiteAdded):
     pass
 
 
+@dataclass(frozen=True)
 class SuiteRemoved(Event):
     building_id: UUID
     number: str
     name: str | None = None
 
 
+@dataclass(eq=False)
 class Building(Aggregate):
     name: str
     address: Address
     suites: list[Suite]
-    building_id: UUID | None = None
+    building_id: UUID
 
-    @validator("building_id", pre=True, always=True)
-    def check_id(cls, building_id) -> UUID:
-        return building_id or uuid4()
+    _hash_fields: ClassVar[list[str]] = ["building_id"]
 
     @property
     def suites_dict(self) -> dict[str, Suite]:
@@ -150,6 +145,7 @@ def test_value_object():
     )
     assert address1 == address2
     assert address1 != address3
+    assert hash(address1)
 
 
 def test_entity():
@@ -158,6 +154,7 @@ def test_entity():
     suite_c = Suite(number="6701", name="Suite 6700", floor=67, sqft=755602, leased=True)
     assert suite_a == suite_b
     assert suite_a != suite_c
+    assert hash(suite_a)
 
 
 def test_aggregate():
@@ -177,7 +174,10 @@ def test_aggregate():
         name="30 Rockefeller Center",
         address=address,
         suites=[suite_a, suite_b],
+        building_id="big-building",
     )
+
+    assert hash(thirty_rock)
 
     # Test domain events
     with pytest.raises(ConstraintViolationError):
@@ -217,3 +217,12 @@ def test_aggregate():
     assert isinstance(event_3, SuiteLeased)
     assert isinstance(event_4, SuiteAdded)
     assert isinstance(event_5, SuiteRemoved)
+
+
+def test_event():
+    event = SuiteAdded(
+        building_id= 123,
+        number= "123",
+    )
+    assert hash(event)
+

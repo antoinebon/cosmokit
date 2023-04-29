@@ -21,7 +21,6 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-    "pydantic"
 ]
 dynamic = ["version"]
 
@@ -109,4 +108,4 @@ ban-relative-imports = "all"
 "tests/**/*" = ["I252", "S101"]
 
 [tool.ruff.pep8-naming]
-classmethod-decorators = ["classmethod", "pydantic.validator"]
+classmethod-decorators = ["classmethod"]

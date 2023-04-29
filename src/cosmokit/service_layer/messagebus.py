@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Callable
 
-from ..domain.messages import Command, Event, Message
+from ..domain.model import Command, Event, Message
 from .unit_of_work import AbstractUnitOfWork
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ class MessageBus:
                 raise Exception(f"{message} was not an Event or Command")
 
     def handle_event(self, event: Event) -> None:
-        for handler in self.event_handlers[type(event)]:
+        for handler in self.event_handlers.get(type(event), []):
             try:
                 logger.debug("handling event %s with handler %s", event, handler)
                 handler(event)

@@ -5,11 +5,12 @@ import copy
 from collections.abc import Generator
 
 from ..adapters.repository import AbstractRepository, MemoryRepository
-from ..domain.messages import Event
+from ..domain.model import Event
 
 
 class AbstractUnitOfWork(abc.ABC):
     _repository_type: type[AbstractRepository]
+    repository: AbstractRepository
 
     def __init__(self, repository: AbstractRepository):
         self._check_repository_type(repository)
@@ -48,6 +49,7 @@ class AbstractUnitOfWork(abc.ABC):
 class MemoryUnitOfWork(AbstractUnitOfWork):
     _repository_type = MemoryRepository
     _committed: bool
+    _repo_backup: AbstractRepository
 
     def __enter__(self) -> MemoryUnitOfWork:
         self._repo_backup = copy.copy(self.repository)
